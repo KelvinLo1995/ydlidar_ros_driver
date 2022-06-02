@@ -150,6 +150,10 @@ int main(int argc, char **argv) {
   bool point_cloud_preservative = false;
   nh_private.param<bool>("point_cloud_preservative", point_cloud_preservative,
                          point_cloud_preservative);
+                         
+  bool use_ros_time = false;
+  nh_private.param<bool>("use_ros_time", use_ros_time,
+                         false);
 
   ros::ServiceServer stop_scan_service = nh.advertiseService("stop_scan",
                                          stop_scan);
@@ -178,7 +182,7 @@ int main(int argc, char **argv) {
       ros::Time start_scan_time;
       start_scan_time.sec = scan.stamp / 1000000000ul;
       start_scan_time.nsec = scan.stamp % 1000000000ul;
-      scan_msg.header.stamp = start_scan_time;
+      scan_msg.header.stamp = use_ros_time ? ros::Time::now() : start_scan_time;
       scan_msg.header.frame_id = frame_id;
       pc_msg.header = scan_msg.header;
 //      fan.header = scan_msg.header;
